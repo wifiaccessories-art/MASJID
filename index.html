@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Mosque TV Display</title>
+<style>
+  :root{
+    --bg1:#083b2f;
+    --bg2:#0f5a45;
+    --bg3:#0a4737;
+    --panel:#fffaf0;
+    --panel2:#f5ecd5;
+    --gold:#d9b25f;
+    --gold-soft:#f1dfab;
+    --green:#114b37;
+    --green-2:#1d6a50;
+    --green-3:#2a7a5d;
+    --ink:#18212c;
+    --muted:#5b6878;
+    --maroon:#7b2230;
+    --cream:#fffdf7;
+    --shadow:0 16px 40px rgba(0,0,0,.18);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{
+    font-family:"Segoe UI", Tahoma, Arial, sans-serif;
+    color:var(--ink);
+    overflow:hidden;
+    background:
+      radial-gradient(circle at 15% 10%, rgba(241,223,171,.16), transparent 17%),
+      radial-gradient(circle at 85% 15%, rgba(255,255,255,.08), transparent 20%),
+      radial-gradient(circle at 50% 100%, rgba(241,223,171,.08), transparent 28%),
+      linear-gradient(145deg, var(--bg1), var(--bg2) 58%, var(--bg3) 100%);
+  }
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    pointer-events:none;
+    background:
+      radial-gradient(circle at 50% 12%, rgba(255,255,255,.06), transparent 18%),
+      repeating-linear-gradient(90deg, rgba(217,178,95,.05) 0 2px, transparent 2px 170px),
+      repeating-linear-gradient(0deg, rgba(217,178,95,.045) 0 2px, transparent 2px 170px);
+    mask-image: radial-gradient(circle at center, black 0, black 70%, transparent 100%);
+  }
+
+  .screen{
+    width:100vw; height:100vh;
+    padding:1.5vh 1.45vw 1.8vh;
+    display:grid;
+    grid-template-rows:15.2vh 1fr;
+    gap:1.35vh;
+  }
+
+  .frame{
+    border:2px solid var(--gold);
+    border-radius:24px;
+    background:linear-gradient(180deg, rgba(255,250,240,.985), rgba(245,236,213,.985));
+    box-shadow:var(--shadow);
+    overflow:hidden;
+  }
+
+  .top{
+    display:grid;
+    grid-template-columns:25% 75%;
+    min-height:0;
+  }
+  .top-box{
+    min-width:0;
+    min-height:0;
+    border-right:2px solid var(--gold);
+    padding:1.05vh 1vw 1.15vh 1vw;
+    display:flex;
+    align-items:center;
+    overflow:hidden;
+    background:linear-gradient(180deg, rgba(255,255,255,.78), rgba(245,236,213,.92));
+  }
+  .top-box:last-child{border-right:0}
+  .clock-box{
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+    background:
+      radial-gradient(circle at 78% 18%, rgba(217,178,95,.20), transparent 34%),
+      linear-gradient(180deg, rgba(17,75,55,.11), rgba(255,250,240,.98)),
+      linear-gradient(180deg, rgba(255,250,240,.98), rgba(245,236,213,.98));
+  }
+  .clock-label{
+    display:none;
+  }
+  .clock-time{
+    margin-top:0;
+    width:100%;
+    text-align:center;
+    font-size:clamp(30px,2.15vw,44px);
+    line-height:1.08;
+    font-weight:850;
+    color:#0f172a;
+    white-space:nowrap;
+    padding-bottom:.08em;
+    display:block;
+    max-width:100%;
+  }
+  .top-message{
+    width:100%;
+    height:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    line-height:1.1;
+    font-size:clamp(20px,1.62vw,32px);
+    font-weight:700;
+    color:var(--green);
+    text-shadow:0 1px 0 rgba(255,255,255,.55);
+    overflow:hidden;
+    white-space:nowrap;
+    padding:0 .8vw;
+  }
+
+  .board{
+    display:grid;
+    grid-template-columns:repeat(4, minmax(0,1fr));
+    grid-template-rows:minmax(0,60.5%) minmax(60px,9.5%) minmax(0,30%);
+  }
+
+  .panel, .urgent-head, .urgent-cell{
+    min-width:0;
+    min-height:0;
+    border-right:2px solid var(--gold);
+    border-bottom:2px solid var(--gold);
+    background:linear-gradient(180deg, rgba(255,255,255,.62), rgba(245,236,213,.95));
+  }
+  .panel.last-col, .urgent-cell.last-col{border-right:0}
+  .urgent-cell{border-bottom:0}
+  .panel-inner{
+    height:100%;
+    min-height:0;
+    padding:.9vh .78vw 1.2vh;
+    display:flex;
+    flex-direction:column;
+  }
+  .urgent-inner{
+    height:100%;
+    padding:.9vh .78vw;
+  }
+
+  .section-title{
+    margin:0 0 .9vh 0;
+    font-size:clamp(19px,1.55vw,30px);
+    line-height:1.06;
+    font-weight:850;
+    color:#11202d;
+    text-align:center;
+  }
+  .section-title.green{color:var(--green)}
+  .section-title.gold{color:#8b6213}
+  .section-title.maroon{color:var(--maroon)}
+
+  .prayer-shell{
+    flex:1;
+    min-height:0;
+    margin-bottom:.2vh;
+    overflow:hidden;
+    border-radius:18px;
+    border:1.5px solid rgba(217,178,95,.55);
+    background:linear-gradient(180deg, rgba(17,75,55,.05), rgba(255,255,255,.3));
+  }
+  table.prayer-table{
+    width:100%;
+    height:100%;
+    border-collapse:collapse;
+    table-layout:fixed;
+  }
+  .prayer-table thead th{
+    background:linear-gradient(180deg, var(--green-2), var(--green));
+    color:#fff;
+    font-size:clamp(14px,1vw,21px);
+    line-height:1.06;
+    font-weight:800;
+    padding:.52vh .3vw;
+    border-right:1px solid rgba(255,255,255,.18);
+  }
+  .prayer-table thead th:last-child{border-right:0}
+  .prayer-table tbody td{
+    text-align:center;
+    padding:.38vh .35vw;
+    border-top:1px solid rgba(217,178,95,.5);
+    background:rgba(255,255,255,.38);
+    font-size:clamp(13px,.94vw,19px);
+    line-height:1.02;
+    font-weight:700;
+    color:var(--ink);
+  }
+  .prayer-table tbody tr:nth-child(even) td{background:rgba(241,223,171,.27)}
+  .prayer-table tbody td:first-child{
+    text-align:left;
+    padding-left:.68vw;
+    color:var(--green);
+    font-weight:850;
+  }
+
+  .announce-list{
+    flex:1;
+    min-height:0;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    gap:.18vh;
+    overflow:hidden;
+    margin-bottom:.2vh;
+  }
+  .announce-item{
+    flex:1 1 0;
+    min-height:0;
+    border-left:4px solid var(--gold);
+    border-radius:15px;
+    padding:.18vh .62vw;
+    background:rgba(255,255,255,.62);
+    box-shadow: inset 0 0 0 1px rgba(217,178,95,.14);
+    font-size:clamp(14px,1.0vw,20px);
+    line-height:1.08;
+    font-weight:650;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    overflow:hidden;
+  }
+
+  .rotator{
+    flex:1;
+    min-height:0;
+    margin-bottom:.2vh;
+    border-radius:18px;
+    border:1.5px solid rgba(217,178,95,.55);
+    background:
+      radial-gradient(circle at 50% 0%, rgba(217,178,95,.16), transparent 38%),
+      linear-gradient(180deg, rgba(17,75,55,.05), rgba(255,255,255,.3));
+    padding:.8vh .62vw;
+    display:block;
+    overflow:hidden;
+  }
+  .rotator-stage{
+    height:100%;
+    min-height:0;
+    border-radius:18px;
+    background:linear-gradient(180deg, rgba(255,255,255,.88), rgba(245,236,213,.9));
+    box-shadow: inset 0 0 0 1px rgba(217,178,95,.2), 0 8px 24px rgba(16,24,40,.06);
+    display:flex;
+    align-items:stretch;
+    justify-content:stretch;
+    text-align:center;
+    padding:.35vh .5vw;
+    position:relative;
+    overflow:hidden;
+  }
+  .rotator-card{
+    width:100%;
+    height:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:stretch;
+    justify-content:space-between;
+    gap:.18vh;
+    font-size:clamp(15px,.98vw,22px);
+    line-height:1.04;
+    font-weight:850;
+    opacity:1;
+    transition:opacity .7s ease;
+    color:#6f5116;
+    overflow-wrap:anywhere;
+  }
+  .rotator-item{
+    width:100%;
+    flex:1 1 0;
+    min-height:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:.08vh .15vw;
+  }
+  .rotator-card.business{
+    color:var(--green);
+  }
+  
+  .rotator-meta{display:none;}
+
+  .urgent-head{
+    grid-column:1 / 5;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    background:
+      linear-gradient(180deg, rgba(123,34,48,.12), rgba(255,250,240,.98)),
+      linear-gradient(180deg, rgba(255,250,240,.98), rgba(245,236,213,.96));
+  }
+  .urgent-head .section-title{
+    margin:0;
+    width:100%;
+    text-align:center;
+  }
+
+  .urgent-grid{
+    grid-column:1 / 5;
+    display:grid;
+    grid-template-columns:repeat(4, minmax(0,1fr));
+  }
+  .urgent-inner{
+    padding:.72vh .66vw;
+  }
+  .urgent-box{
+    height:100%;
+    min-height:0;
+    border-radius:18px;
+    background:
+      linear-gradient(180deg, rgba(123,34,48,.09), rgba(255,255,255,.55));
+    box-shadow: inset 0 0 0 1px rgba(123,34,48,.16);
+    padding:.7vh .55vw;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+  }
+  .urgent-text{
+    width:100%;
+    font-size:clamp(15px,1.02vw,20px);
+    line-height:1.2;
+    font-weight:760;
+    color:#5f1824;
+    white-space:pre-wrap;
+    word-break:break-word;
+    text-align:center;
+  }
+
+  .hidden{display:none !important}
+
+  @media (max-aspect-ratio: 4/3){
+    .screen{padding:1.1vh .8vw 1.5vh}
+    .top{grid-template-columns:27% 73%}
+  }
+</style>
+</head>
+<body>
+<div class="screen">
+  <div class="top frame">
+    <div class="top-box clock-box">
+      <div class="clock-time" id="clockTime">12:45:18 PM</div>
+    </div>
+    <div class="top-box">
+      <div class="top-message" id="topMessage">Allahuma Immee Asaloka Mimfagleka</div>
+    </div>
+  </div>
+
+  <div class="board frame">
+    <section class="panel" style="grid-column:1;grid-row:1;">
+      <div class="panel-inner">
+        <h2 class="section-title green" id="prayerTitle">Prayer Time</h2>
+        <div class="prayer-shell">
+          <table class="prayer-table" aria-label="Prayer times">
+            <thead>
+              <tr>
+                <th style="width:42%">Salat</th>
+                <th style="width:29%">Start</th>
+                <th style="width:29%">Iqama</th>
+              </tr>
+            </thead>
+            <tbody id="prayerRows"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" style="grid-column:2;grid-row:1;">
+      <div class="panel-inner">
+        <h2 class="section-title" id="announcementTitle">Announcement</h2>
+        <div class="announce-list" id="announcementList"></div>
+      </div>
+    </section>
+
+    <section class="panel" style="grid-column:3;grid-row:1;">
+      <div class="panel-inner">
+        <h2 class="section-title gold" id="sponsorsTitle">Sponsors</h2>
+        <div class="rotator">
+          <div class="rotator-stage">
+            <div class="rotator-card" id="sponsorCard"></div>
+          </div>
+          <div class="rotator-meta" id="sponsorMeta"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel last-col" style="grid-column:4;grid-row:1;">
+      <div class="panel-inner">
+        <h2 class="section-title gold" id="businessTitle">Halal Restaurant &amp; Business</h2>
+        <div class="rotator">
+          <div class="rotator-stage">
+            <div class="rotator-card business" id="businessCard"></div>
+          </div>
+          <div class="rotator-meta" id="businessMeta"></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="urgent-head" style="grid-row:2;">
+      <h2 class="section-title maroon" id="urgentTitle">Urgent Announcement Required</h2>
+    </div>
+
+    <div class="urgent-grid" style="grid-row:3;">
+      <div class="urgent-cell" style="grid-column:1;">
+        <div class="urgent-inner"><div class="urgent-box"><div class="urgent-text" id="urgentMessage1"></div></div></div>
+      </div>
+      <div class="urgent-cell" style="grid-column:2;">
+        <div class="urgent-inner"><div class="urgent-box"><div class="urgent-text" id="urgentMessage2"></div></div></div>
+      </div>
+      <div class="urgent-cell" style="grid-column:3;">
+        <div class="urgent-inner"><div class="urgent-box"><div class="urgent-text" id="urgentMessage3"></div></div></div>
+      </div>
+      <div class="urgent-cell last-col" style="grid-column:4;">
+        <div class="urgent-inner"><div class="urgent-box"><div class="urgent-text" id="urgentMessage4"></div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const SHEET_WEB_APP_URL = "";
+const CACHE_KEY = "mosque_tv_google_sheet_cache_v3";
+const FALLBACK_DATA = {
+  settings: {
+    clock_label: "CLOCK",
+    top_message: "Allahuma Immee Asaloka Mimfagleka",
+    prayer_title: "Prayer Time",
+    announcement_title: "Announcement",
+    sponsors_title: "Sponsors",
+    business_title: "Halal Restaurant & Business",
+    urgent_title: "Urgent Announcement Required",
+    auto_refresh_seconds: 60,
+    sponsor_rotate_seconds: 30,
+    business_rotate_seconds: 30
+  },
+  prayerTimes: [
+    { salat: "Fajr", start: "5:15 AM", iqama: "5:45 AM" },
+    { salat: "Zuhr", start: "1:30 PM", iqama: "1:45 PM" },
+    { salat: "Asr", start: "5:15 PM", iqama: "5:30 PM" },
+    { salat: "Maghrib / Sunset", start: "8:02 PM", iqama: "8:07 PM" },
+    { salat: "Isha", start: "9:35 PM", iqama: "9:45 PM" },
+    { salat: "Jummah 1", start: "1:15 PM", iqama: "1:30 PM" },
+    { salat: "Jummah 2", start: "1:45 PM", iqama: "2:00 PM" },
+    { salat: "Jummah 3", start: "2:15 PM", iqama: "2:30 PM" }
+  ],
+  announcements: [
+    "Please switch your phone to silent mode.",
+    "Classes every Saturday after Maghrib.",
+    "Donate to support the masjid programs."
+  ],
+  sponsors: [
+    "ABC Restaurant",
+    "Noor Grocery",
+    "Al-Huda Travel",
+    "Sunrise Pharmacy",
+    "Community Dental",
+    "Your Business Here"
+  ],
+  businessAds: [
+    "Sponsor and halal business ad space available.",
+    "Contact the committee for monthly rates."
+  ],
+  urgentMessages: [
+    "Parking lot is busy today. Please park only in marked spaces."
+  ]
+};
+
+let currentData = FALLBACK_DATA;
+let refreshTimer = null;
+let sponsorTimer = null;
+let businessTimer = null;
+let announcementTimer = null;
+let sponsorIndex = 0;
+let businessIndex = 0;
+let announcementIndex = 0;
+const ROTATOR_ITEMS_PER_PAGE = 5;
+const ANNOUNCEMENT_ITEMS_PER_PAGE = 5;
+
+function escapeHtml(str){
+  return String(str || "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;");
+}
+
+function safeText(value, fallback){
+  return (value === undefined || value === null || value === "") ? fallback : String(value);
+}
+
+function fitText(el, maxSize, minSize){
+  let size = maxSize;
+  el.style.fontSize = size + "px";
+  while (size > minSize && (el.scrollHeight > el.clientHeight || el.scrollWidth > el.clientWidth)) {
+    size -= 1;
+    el.style.fontSize = size + "px";
+  }
+}
+
+function updateClock(){
+  const now = new Date();
+  document.getElementById("clockTime").textContent =
+    now.toLocaleTimeString([], {hour:'numeric', minute:'2-digit', second:'2-digit'});
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+function renderPrayerRows(prayers){
+  const prayerBody = document.getElementById("prayerRows");
+  prayerBody.innerHTML = "";
+  const rows = (prayers || []).slice(0, 8);
+  rows.forEach((item) => {
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${escapeHtml(item.salat || "")}</td>
+      <td>${escapeHtml(item.start || "")}</td>
+      <td>${escapeHtml(item.iqama || "")}</td>`;
+    prayerBody.appendChild(row);
+  });
+  while (prayerBody.children.length < 8) {
+    const row = document.createElement("tr");
+    row.innerHTML = "<td>&nbsp;</td><td></td><td></td>";
+    prayerBody.appendChild(row);
+  }
+}
+
+function renderAnnouncements(items, pageIndex = 0){
+  const list = document.getElementById("announcementList");
+  list.innerHTML = "";
+  const rows = (items || []).filter(Boolean);
+  const totalPages = Math.max(1, Math.ceil(rows.length / ANNOUNCEMENT_ITEMS_PER_PAGE));
+  const safePageIndex = ((pageIndex % totalPages) + totalPages) % totalPages;
+  const start = safePageIndex * ANNOUNCEMENT_ITEMS_PER_PAGE;
+
+  const pageItems = [];
+  for (let i = 0; i < ANNOUNCEMENT_ITEMS_PER_PAGE; i += 1) {
+    pageItems.push(rows[start + i] || "");
+  }
+
+  pageItems.forEach((text) => {
+    const item = document.createElement("div");
+    item.className = "announce-item";
+    item.innerHTML = text ? escapeHtml(text) : "&nbsp;";
+    list.appendChild(item);
+  });
+
+  return safePageIndex;
+}
+
+function renderRotatorPage(card, items, startIndex, emptyText){
+  const list = (items || []).filter(Boolean);
+  if (!list.length) {
+    card.innerHTML = '<div class="rotator-item">' + escapeHtml(emptyText) + '</div><div class="rotator-item">&nbsp;</div>';
+    return 0;
+  }
+
+  const pageStart = Math.max(0, startIndex);
+  const pageItems = [];
+  for (let i = 0; i < ROTATOR_ITEMS_PER_PAGE; i += 1) {
+    const item = list[pageStart + i];
+    pageItems.push(item ? escapeHtml(item) : "&nbsp;");
+  }
+
+  card.style.opacity = 0;
+  setTimeout(() => {
+    card.innerHTML = pageItems.map(text => '<div class="rotator-item">' + text + '</div>').join('');
+    card.style.opacity = 1;
+  }, 120);
+
+  return pageStart;
+}
+
+function updateRotator(cardId, metaId, items, index, emptyText){
+  const card = document.getElementById(cardId);
+  const list = (items || []).filter(Boolean);
+
+  if (!list.length) {
+    return renderRotatorPage(card, [], 0, emptyText);
+  }
+
+  const totalPages = Math.max(1, Math.ceil(list.length / ROTATOR_ITEMS_PER_PAGE));
+  const safePageIndex = ((index % totalPages) + totalPages) % totalPages;
+  const pageStart = safePageIndex * ROTATOR_ITEMS_PER_PAGE;
+  renderRotatorPage(card, list, pageStart, emptyText);
+  return safePageIndex;
+}
+
+function startRotators(data){
+  clearInterval(sponsorTimer);
+  clearInterval(businessTimer);
+  clearInterval(announcementTimer);
+
+  const settings = data.settings || {};
+  const sponsorItems = (data.sponsors || []).filter(Boolean);
+  const businessItems = (data.businessAds || []).filter(Boolean);
+  const announcementItems = (data.announcements || []).filter(Boolean);
+
+  sponsorIndex = updateRotator("sponsorCard", "sponsorMeta", sponsorItems, 0, "Add sponsor names in Google Sheet");
+  businessIndex = updateRotator("businessCard", "businessMeta", businessItems, 0, "Add halal restaurant or business names in Google Sheet");
+  announcementIndex = renderAnnouncements(announcementItems, 0);
+
+  const sponsorSeconds = Math.max(5, Number(settings.sponsor_rotate_seconds || 30));
+  const businessSeconds = Math.max(5, Number(settings.business_rotate_seconds || 30));
+  const announcementSeconds = Math.max(5, Number(settings.announcement_rotate_seconds || 30));
+  const sponsorPages = Math.max(1, Math.ceil(sponsorItems.length / ROTATOR_ITEMS_PER_PAGE));
+  const businessPages = Math.max(1, Math.ceil(businessItems.length / ROTATOR_ITEMS_PER_PAGE));
+  const announcementPages = Math.max(1, Math.ceil(announcementItems.length / ANNOUNCEMENT_ITEMS_PER_PAGE));
+
+  if (sponsorPages > 1) {
+    sponsorTimer = setInterval(() => {
+      sponsorIndex = (sponsorIndex + 1) % sponsorPages;
+      updateRotator("sponsorCard", "sponsorMeta", sponsorItems, sponsorIndex, "Add sponsor names in Google Sheet");
+    }, sponsorSeconds * 1000);
+  }
+
+  if (businessPages > 1) {
+    businessTimer = setInterval(() => {
+      businessIndex = (businessIndex + 1) % businessPages;
+      updateRotator("businessCard", "businessMeta", businessItems, businessIndex, "Add halal restaurant or business names in Google Sheet");
+    }, businessSeconds * 1000);
+  }
+
+  if (announcementPages > 1) {
+    announcementTimer = setInterval(() => {
+      announcementIndex = (announcementIndex + 1) % announcementPages;
+      renderAnnouncements(announcementItems, announcementIndex);
+    }, announcementSeconds * 1000);
+  }
+}
+
+function renderUrgentMessages(items){
+  const messages = (items || []).filter(Boolean);
+  for (let i = 1; i <= 4; i += 1) {
+    document.getElementById("urgentMessage" + i).textContent = messages[i - 1] || "";
+  }
+}
+
+function render(data){
+  currentData = data || FALLBACK_DATA;
+  const settings = currentData.settings || {};
+  const clockLabelEl = document.getElementById("clockLabel");
+
+  document.getElementById("topMessage").textContent = safeText(settings.top_message, FALLBACK_DATA.settings.top_message);
+  document.getElementById("prayerTitle").textContent = safeText(settings.prayer_title, "Prayer Time");
+  document.getElementById("announcementTitle").textContent = safeText(settings.announcement_title, "Announcement");
+  document.getElementById("sponsorsTitle").textContent = safeText(settings.sponsors_title, "Sponsors");
+  document.getElementById("businessTitle").textContent = safeText(settings.business_title, "Halal Restaurant & Business");
+  document.getElementById("urgentTitle").textContent = safeText(settings.urgent_title, "Urgent Announcement Required");
+
+  renderPrayerRows(currentData.prayerTimes || []);
+  renderUrgentMessages(currentData.urgentMessages || []);
+  startRotators(currentData);
+
+  requestAnimationFrame(() => {
+    fitText(document.getElementById("topMessage"), 38, 18);
+    fitText(document.getElementById("clockTime"), 44, 24);
+  });
+}
+
+function cacheData(data){
+  try {
+    localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+  } catch (e) {}
+}
+
+function readCachedData(){
+  try {
+    const raw = localStorage.getItem(CACHE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch (e) {
+    return null;
+  }
+}
+
+function onSheetData(data){
+  if (!data || typeof data !== "object") return;
+  cacheData(data);
+  render(data);
+  scheduleNext();
+}
+
+function loadFromSheet(){
+  if (!SHEET_WEB_APP_URL) {
+    scheduleNext();
+    return;
+  }
+  const callbackName = "__mosqueSheetCallback_" + Date.now();
+  let script = null;
+
+  function cleanup(){
+    try { delete window[callbackName]; } catch (e) {}
+    if (script && script.parentNode) script.parentNode.removeChild(script);
+  }
+
+  window[callbackName] = function(data){
+    cleanup();
+    onSheetData(data);
+  };
+
+  script = document.createElement("script");
+  script.src = SHEET_WEB_APP_URL + (SHEET_WEB_APP_URL.includes("?") ? "&" : "?") +
+    "callback=" + callbackName + "&_ts=" + Date.now();
+  script.onerror = function(){
+    cleanup();
+    scheduleNext();
+  };
+  document.body.appendChild(script);
+}
+
+function scheduleNext(){
+  const seconds = Number((currentData.settings && currentData.settings.auto_refresh_seconds) || 60);
+  clearTimeout(refreshTimer);
+  refreshTimer = setTimeout(loadFromSheet, Math.max(15, seconds) * 1000);
+}
+
+render(readCachedData() || FALLBACK_DATA);
+loadFromSheet();
+</script>
+</body>
+</html>
