@@ -6,21 +6,21 @@
 <title>Mosque TV Display</title>
 <style>
   :root{
-    --bg1:#083b2f;
-    --bg2:#0f5a45;
-    --bg3:#0a4737;
-    --panel:#fffaf0;
-    --panel2:#f5ecd5;
-    --gold:#d9b25f;
-    --gold-soft:#f1dfab;
-    --green:#114b37;
-    --green-2:#1d6a50;
+    --bg1:#061733;
+    --bg2:#061733;
+    --bg3:#061733;
+    --panel:#0b1f45;
+    --panel2:#0b1f45;
+    --gold:#d7a93a;
+    --gold-soft:#f0d27a;
+    --green:#dfeaff;
+    --green-2:#173b72;
     --green-3:#2a7a5d;
-    --ink:#18212c;
+    --ink:#f4f8ff;
     --muted:#5b6878;
-    --maroon:#7b2230;
+    --maroon:#ffd6d6;
     --cream:#fffdf7;
-    --shadow:0 16px 40px rgba(0,0,0,.18);
+    --shadow:0 24px 54px rgba(0,0,0,.42);
   }
   *{box-sizing:border-box}
   html,body{margin:0;height:100%}
@@ -28,21 +28,16 @@
     font-family:"Segoe UI", Tahoma, Arial, sans-serif;
     color:var(--ink);
     overflow:hidden;
-    background:
-      radial-gradient(circle at 15% 10%, rgba(241,223,171,.16), transparent 17%),
-      radial-gradient(circle at 85% 15%, rgba(255,255,255,.08), transparent 20%),
-      radial-gradient(circle at 50% 100%, rgba(241,223,171,.08), transparent 28%),
-      linear-gradient(145deg, var(--bg1), var(--bg2) 58%, var(--bg3) 100%);
+    background:linear-gradient(180deg, #061733, #061733);
   }
   body::before{
     content:"";
     position:fixed; inset:0;
     pointer-events:none;
     background:
-      radial-gradient(circle at 50% 12%, rgba(255,255,255,.06), transparent 18%),
-      repeating-linear-gradient(90deg, rgba(217,178,95,.05) 0 2px, transparent 2px 170px),
-      repeating-linear-gradient(0deg, rgba(217,178,95,.045) 0 2px, transparent 2px 170px);
-    mask-image: radial-gradient(circle at center, black 0, black 70%, transparent 100%);
+      repeating-linear-gradient(90deg, rgba(31,134,255,.05) 0 1px, transparent 1px 170px),
+      repeating-linear-gradient(0deg, rgba(31,134,255,.05) 0 1px, transparent 1px 170px);
+    mask-image: radial-gradient(circle at center, black 0, black 78%, transparent 100%);
   }
 
   .screen{
@@ -54,9 +49,9 @@
   }
 
   .frame{
-    border:2px solid var(--gold);
+    border:3px solid var(--gold);
     border-radius:24px;
-    background:linear-gradient(180deg, rgba(255,250,240,.985), rgba(245,236,213,.985));
+    background:linear-gradient(180deg, #061733, #061733);
     box-shadow:var(--shadow);
     overflow:hidden;
   }
@@ -74,7 +69,7 @@
     display:flex;
     align-items:center;
     overflow:hidden;
-    background:linear-gradient(180deg, rgba(255,255,255,.78), rgba(245,236,213,.92));
+    background:linear-gradient(180deg, #0b1f45, #0b1f45);
   }
   .top-box:last-child{border-right:0}
   .clock-box{
@@ -82,10 +77,7 @@
     align-items:center;
     justify-content:center;
     overflow:hidden;
-    background:
-      radial-gradient(circle at 78% 18%, rgba(217,178,95,.20), transparent 34%),
-      linear-gradient(180deg, rgba(17,75,55,.11), rgba(255,250,240,.98)),
-      linear-gradient(180deg, rgba(255,250,240,.98), rgba(245,236,213,.98));
+    background:#0b1f45;
   }
   .clock-label{
     display:none;
@@ -94,10 +86,10 @@
     margin-top:0;
     width:100%;
     text-align:center;
-    font-size:clamp(30px,2.15vw,44px);
-    line-height:1.08;
-    font-weight:850;
-    color:#0f172a;
+    font-size:clamp(44px,3.2vw,74px);
+    line-height:1.06;
+    font-weight:900;
+    color:#ffd670;
     white-space:nowrap;
     padding-bottom:.08em;
     display:block;
@@ -111,10 +103,12 @@
     justify-content:center;
     text-align:center;
     line-height:1.1;
-    font-size:clamp(20px,1.62vw,32px);
-    font-weight:700;
-    color:var(--green);
-    text-shadow:0 1px 0 rgba(255,255,255,.55);
+    font-size:clamp(24px,1.9vw,40px);
+    font-weight:900;
+    color:#ffd670;
+    text-shadow:none;
+    text-transform:uppercase;
+    letter-spacing:.03em;
     overflow:hidden;
     white-space:nowrap;
     padding:0 .8vw;
@@ -131,7 +125,7 @@
     min-height:0;
     border-right:2px solid var(--gold);
     border-bottom:2px solid var(--gold);
-    background:linear-gradient(180deg, rgba(255,255,255,.62), rgba(245,236,213,.95));
+    background:linear-gradient(180deg, #061733, #061733);
   }
   .panel.last-col, .urgent-cell.last-col{border-right:0}
   .urgent-cell{border-bottom:0}
@@ -148,16 +142,19 @@
   }
 
   .section-title{
-    margin:0 0 .9vh 0;
-    font-size:clamp(19px,1.55vw,30px);
-    line-height:1.06;
-    font-weight:850;
-    color:#11202d;
+    margin:0 0 1.05vh 0;
+    font-size:clamp(24px,1.95vw,42px);
+    line-height:1.04;
+    font-weight:900;
+    letter-spacing:.03em;
+    text-transform:uppercase;
+    color:#ffd670;
     text-align:center;
+    text-shadow:none;
   }
-  .section-title.green{color:var(--green)}
-  .section-title.gold{color:#8b6213}
-  .section-title.maroon{color:var(--maroon)}
+  .section-title.green{color:#ffd670}
+  .section-title.gold{color:#ffd670}
+  .section-title.maroon{color:#ffd670}
 
   .prayer-shell{
     flex:1;
@@ -165,8 +162,8 @@
     margin-bottom:.2vh;
     overflow:hidden;
     border-radius:18px;
-    border:1.5px solid rgba(217,178,95,.55);
-    background:linear-gradient(180deg, rgba(17,75,55,.05), rgba(255,255,255,.3));
+    border:1.5px solid rgba(215,169,58,.75);
+    background:linear-gradient(180deg, #0b1f45, #0b1f45);
   }
   table.prayer-table{
     width:100%;
@@ -175,11 +172,13 @@
     table-layout:fixed;
   }
   .prayer-table thead th{
-    background:linear-gradient(180deg, var(--green-2), var(--green));
-    color:#fff;
-    font-size:clamp(14px,1vw,21px);
-    line-height:1.06;
-    font-weight:800;
+    background:linear-gradient(180deg, #173b72, #173b72);
+    color:#ffffff;
+    font-size:clamp(17px,1.15vw,24px);
+    line-height:1.04;
+    font-weight:900;
+    text-transform:uppercase;
+    letter-spacing:.02em;
     padding:.52vh .3vw;
     border-right:1px solid rgba(255,255,255,.18);
   }
@@ -187,19 +186,19 @@
   .prayer-table tbody td{
     text-align:center;
     padding:.38vh .35vw;
-    border-top:1px solid rgba(217,178,95,.5);
-    background:rgba(255,255,255,.38);
-    font-size:clamp(13px,.94vw,19px);
+    border-top:1px solid rgba(215,169,58,.45);
+    background:#061733;
+    font-size:clamp(16px,1.08vw,24px);
     line-height:1.02;
-    font-weight:700;
-    color:var(--ink);
+    font-weight:800;
+    color:#ffffff;
   }
-  .prayer-table tbody tr:nth-child(even) td{background:rgba(241,223,171,.27)}
+  .prayer-table tbody tr:nth-child(even) td{background:#0b1f45}
   .prayer-table tbody td:first-child{
     text-align:left;
     padding-left:.68vw;
-    color:var(--green);
-    font-weight:850;
+    color:#ffffff;
+    font-weight:900;
   }
 
   .announce-list{
@@ -215,19 +214,20 @@
   .announce-item{
     flex:1 1 0;
     min-height:0;
-    border-left:4px solid var(--gold);
+    border:1.5px solid rgba(215,169,58,.75);
     border-radius:15px;
     padding:.18vh .62vw;
-    background:rgba(255,255,255,.62);
-    box-shadow: inset 0 0 0 1px rgba(217,178,95,.14);
-    font-size:clamp(14px,1.0vw,20px);
+    background:#0b1f45;
+    box-shadow:none;
+    font-size:clamp(17px,1.12vw,24px);
     line-height:1.08;
-    font-weight:650;
+    font-weight:800;
     display:flex;
     align-items:center;
     justify-content:center;
     text-align:center;
     overflow:hidden;
+    color:#ffffff;
   }
 
   .rotator{
@@ -235,10 +235,8 @@
     min-height:0;
     margin-bottom:.2vh;
     border-radius:18px;
-    border:1.5px solid rgba(217,178,95,.55);
-    background:
-      radial-gradient(circle at 50% 0%, rgba(217,178,95,.16), transparent 38%),
-      linear-gradient(180deg, rgba(17,75,55,.05), rgba(255,255,255,.3));
+    border:1.5px solid rgba(215,169,58,.75);
+    background:#0b1f45;
     padding:.8vh .62vw;
     display:block;
     overflow:hidden;
@@ -247,8 +245,8 @@
     height:100%;
     min-height:0;
     border-radius:18px;
-    background:linear-gradient(180deg, rgba(255,255,255,.88), rgba(245,236,213,.9));
-    box-shadow: inset 0 0 0 1px rgba(217,178,95,.2), 0 8px 24px rgba(16,24,40,.06);
+    background:#0b1f45;
+    box-shadow: inset 0 0 0 1px rgba(215,169,58,.35);
     display:flex;
     align-items:stretch;
     justify-content:stretch;
@@ -265,13 +263,16 @@
     align-items:stretch;
     justify-content:space-between;
     gap:.18vh;
-    font-size:clamp(15px,.98vw,22px);
-    line-height:1.04;
-    font-weight:850;
+    font-size:clamp(18px,1.18vw,28px);
+    line-height:1.02;
+    font-weight:900;
+    letter-spacing:.02em;
+    text-transform:uppercase;
     opacity:1;
     transition:opacity .7s ease;
-    color:#6f5116;
+    color:#ffffff;
     overflow-wrap:anywhere;
+    text-shadow:none;
   }
   .rotator-item{
     width:100%;
@@ -284,7 +285,7 @@
     padding:.08vh .15vw;
   }
   .rotator-card.business{
-    color:var(--green);
+    color:#ffffff;
   }
   
   .rotator-meta{display:none;}
@@ -295,9 +296,7 @@
     align-items:center;
     justify-content:center;
     text-align:center;
-    background:
-      linear-gradient(180deg, rgba(123,34,48,.12), rgba(255,250,240,.98)),
-      linear-gradient(180deg, rgba(255,250,240,.98), rgba(245,236,213,.96));
+    background:#061733;
   }
   .urgent-head .section-title{
     margin:0;
@@ -317,9 +316,8 @@
     height:100%;
     min-height:0;
     border-radius:18px;
-    background:
-      linear-gradient(180deg, rgba(123,34,48,.09), rgba(255,255,255,.55));
-    box-shadow: inset 0 0 0 1px rgba(123,34,48,.16);
+    background:#0b1f45;
+    box-shadow: inset 0 0 0 1px rgba(215,169,58,.35);
     padding:.7vh .55vw;
     display:flex;
     align-items:center;
@@ -328,10 +326,10 @@
   }
   .urgent-text{
     width:100%;
-    font-size:clamp(15px,1.02vw,20px);
-    line-height:1.2;
-    font-weight:760;
-    color:#5f1824;
+    font-size:clamp(17px,1.1vw,24px);
+    line-height:1.14;
+    font-weight:850;
+    color:#ffffff;
     white-space:pre-wrap;
     word-break:break-word;
     text-align:center;
@@ -568,7 +566,7 @@ function renderRotatorPage(card, items, startIndex, emptyText){
   const pageItems = [];
   for (let i = 0; i < ROTATOR_ITEMS_PER_PAGE; i += 1) {
     const item = list[pageStart + i];
-    pageItems.push(item ? escapeHtml(item) : "&nbsp;");
+    pageItems.push(item ? escapeHtml(String(item).toUpperCase()) : "&nbsp;");
   }
 
   card.style.opacity = 0;
@@ -650,12 +648,12 @@ function render(data){
   const settings = currentData.settings || {};
   const clockLabelEl = document.getElementById("clockLabel");
 
-  document.getElementById("topMessage").textContent = safeText(settings.top_message, FALLBACK_DATA.settings.top_message);
-  document.getElementById("prayerTitle").textContent = safeText(settings.prayer_title, "Prayer Time");
-  document.getElementById("announcementTitle").textContent = safeText(settings.announcement_title, "Announcement");
-  document.getElementById("sponsorsTitle").textContent = safeText(settings.sponsors_title, "Sponsors");
-  document.getElementById("businessTitle").textContent = safeText(settings.business_title, "Halal Restaurant & Business");
-  document.getElementById("urgentTitle").textContent = safeText(settings.urgent_title, "Urgent Announcement Required");
+  document.getElementById("topMessage").textContent = safeText(settings.top_message, FALLBACK_DATA.settings.top_message).toUpperCase();
+  document.getElementById("prayerTitle").textContent = safeText(settings.prayer_title, "Prayer Time").toUpperCase();
+  document.getElementById("announcementTitle").textContent = safeText(settings.announcement_title, "Announcement").toUpperCase();
+  document.getElementById("sponsorsTitle").textContent = safeText(settings.sponsors_title, "Sponsors").toUpperCase();
+  document.getElementById("businessTitle").textContent = safeText(settings.business_title, "Halal Restaurant & Business").toUpperCase();
+  document.getElementById("urgentTitle").textContent = safeText(settings.urgent_title, "Urgent Announcement Required").toUpperCase();
 
   renderPrayerRows(currentData.prayerTimes || []);
   renderUrgentMessages(currentData.urgentMessages || []);
@@ -663,7 +661,7 @@ function render(data){
 
   requestAnimationFrame(() => {
     fitText(document.getElementById("topMessage"), 38, 18);
-    fitText(document.getElementById("clockTime"), 44, 24);
+    fitText(document.getElementById("clockTime"), 58, 30);
   });
 }
 
